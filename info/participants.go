@@ -3,6 +3,7 @@ package info
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"gopkg.in/yaml.v3"
 )
@@ -28,16 +29,23 @@ func GetPartipantOccupation(participantName string) ([]Occupation, error) {
 	}
 
 	var res []Occupation
-	for shiftID, shift := range quadrantData {
-		for occupationID, occupation := range shift {
+
+	var shiftIDs []int
+	for sID, _ := range quadrantData {
+		shiftIDs = append(shiftIDs, sID)
+	}
+	sort.Ints(shiftIDs)
+
+	for _, shiftID := range shiftIDs {
+		for occupationID, occupation := range quadrantData[shiftID] {
 			for _, team := range occupation {
 				for _, person := range team {
 					if person == participantName {
-						o := Occupation{
+						occup := Occupation{
 							ShifID:         shiftID,
 							OccupationName: getOcupationName(occupationID),
 						}
-						res = append(res, o)
+						res = append(res, occup)
 					}
 				}
 			}
