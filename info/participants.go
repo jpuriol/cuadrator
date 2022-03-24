@@ -8,7 +8,7 @@ import (
 )
 
 type Occupation struct {
-	ShiftName      string
+	ShifID         int
 	OccupationName string
 }
 
@@ -34,7 +34,7 @@ func GetPartipantOccupation(participantName string) ([]Occupation, error) {
 				for _, person := range team {
 					if person == participantName {
 						o := Occupation{
-							ShiftName:      getShiftName(shiftID),
+							ShifID:         shiftID,
 							OccupationName: getOcupationName(occupationID),
 						}
 						res = append(res, o)

@@ -24,7 +24,7 @@ var showCmd = &cobra.Command{
 		}
 
 		for _, o := range occupations {
-			fmt.Printf("%s: %s\n", o.ShiftName, o.OccupationName)
+			fmt.Printf("%v: %q\n", o.ShifID, o.OccupationName)
 		}
 
 	},
