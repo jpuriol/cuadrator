@@ -11,6 +11,21 @@ type schema struct {
 	Occupations map[int]string
 }
 
+func getSchema() (schema, error) {
+	rawData, err := os.ReadFile(schemaFile)
+	if err != nil {
+		return schema{}, err
+	}
+
+	var s schema
+	err = yaml.Unmarshal(rawData, &s)
+	if err != nil {
+		return schema{}, err
+	}
+
+	return s, nil
+}
+
 func getShiftName(shiftID int) string {
 	rawData, _ := os.ReadFile(schemaFile)
 
