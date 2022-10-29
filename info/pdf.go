@@ -59,17 +59,17 @@ func PrintPDF() error {
 		for _, occupationN := range ocuppationNums {
 
 			var teams strings.Builder
-			teams.WriteString("   ")
 			for _, team := range quadrant[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
-				teams.WriteString(fmt.Sprintf(" [%v],", teamStr))
+				teams.WriteString(fmt.Sprintf(" %v,", teamStr))
 			}
 
 			m.Row(10, func() {
 				m.Col(2, func() {
 					m.Text(schema.Occupations[occupationN], occupationStyle)
 				})
-				m.Col(10, func() {
+				m.ColSpace(1)
+				m.Col(9, func() {
 					m.Text(teams.String(), namesStyle)
 				})
 			})
