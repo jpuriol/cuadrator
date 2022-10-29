@@ -2,6 +2,7 @@ package info
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/johnfercher/maroto/pkg/consts"
@@ -28,60 +29,51 @@ func PrintPDF() error {
 		return err
 	}
 
-	m := pdf.NewMaroto(consts.Landscape, consts.A4)
-	m.SetBorder(true)
+	var shiftNums []int
+	for k := range schema.Shifts {
+		shiftNums = append(shiftNums, k)
+	}
+	sort.Ints(shiftNums)
 
-	m.Row(15, func() {
-		m.Col(2, func() {})
+	var ocuppationNums []int
+	for k := range schema.Occupations {
+		ocuppationNums = append(ocuppationNums, k)
+	}
+	sort.Ints(ocuppationNums)
 
-		m.Col(3, func() {
-			m.Text(schema.Occupations[1], headerStyle)
-		})
-		m.Col(2, func() {
-			m.Text(schema.Occupations[2], headerStyle)
-		})
-		m.Col(2, func() {
-			m.Text(schema.Occupations[3], headerStyle)
-		})
-		m.Col(2, func() {
-			m.Text(schema.Occupations[4], headerStyle)
-		})
-	})
+	m := pdf.NewMaroto(consts.Portrait, consts.A4)
 
-	for shifID := 1; shifID <= 4; shifID++ {
-		m.Row(40, func() {
-			m.Col(2, func() {
-				m.Text(schema.Shifts[shifID], headerStyle)
+	for _, shiftN := range shiftNums {
+
+		m.Row(5, func() {
+			m.Text(schema.Shifts[shiftN], shiftsStyle)
+		})
+
+		m.Line(1.0, props.Line{
+			Style: consts.Dashed,
+			Width: 0.3,
+		})
+
+		m.Row(5, func() {})
+
+		for _, occupationN := range ocuppationNums {
+
+			m.Row(5, func() {
+				m.Text(schema.Occupations[occupationN], occupationStyle)
 			})
 
-			m.Col(3, func() {
-				for i, team := range quadrant[shifID][1] {
-					str := strings.Join(team, " - ")
-					m.Text(str, bodyStyle(i))
-				}
+			var sb strings.Builder
+			for _, team := range quadrant[shiftN][occupationN] {
+				teamStr := strings.Join(team, "-")
+				sb.WriteString(fmt.Sprintf("[%v],", teamStr))
+			}
+			m.Row(5, func() {
+				m.Text(sb.String(), namesStyle)
 			})
 
-			m.Col(2, func() {
-				for i, team := range quadrant[shifID][2] {
-					str := strings.Join(team, " - ")
-					m.Text(str, bodyStyle(i))
-				}
-			})
+		}
 
-			m.Col(2, func() {
-				for i, team := range quadrant[shifID][3] {
-					str := strings.Join(team, " - ")
-					m.Text(str, bodyStyle(i))
-				}
-			})
-
-			m.Col(2, func() {
-				for i, team := range quadrant[shifID][4] {
-					str := strings.Join(team, " - ")
-					m.Text(str, bodyStyle(i))
-				}
-			})
-		})
+		m.Row(5, func() {})
 	}
 
 	err = m.OutputFileAndClose(pdfFileName)
@@ -92,20 +84,23 @@ func PrintPDF() error {
 	return nil
 }
 
-var headerStyle = props.Text{
-	Top:    5,
+var shiftsStyle = props.Text{
 	Family: consts.Helvetica,
-	Style:  consts.Bold,
+	Style:  consts.BoldItalic,
 	Align:  consts.Center,
 	Size:   12,
 }
 
-func bodyStyle(i int) props.Text {
-	return props.Text{
-		Top:    4.0 + float64(i*5),
-		Family: consts.Helvetica,
-		Style:  consts.Normal,
-		Align:  consts.Center,
-		Size:   10,
-	}
+var occupationStyle = props.Text{
+	Family: consts.Helvetica,
+	Style:  consts.Normal,
+	Align:  consts.Center,
+	Size:   12,
+}
+
+var namesStyle = props.Text{
+	Family: consts.Helvetica,
+	Style:  consts.Normal,
+	Align:  consts.Center,
+	Size:   10,
 }
