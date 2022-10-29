@@ -58,19 +58,21 @@ func PrintPDF() error {
 
 		for _, occupationN := range ocuppationNums {
 
-			m.Row(5, func() {
-				m.Text(schema.Occupations[occupationN], occupationStyle)
-			})
-
-			var sb strings.Builder
+			var teams strings.Builder
+			teams.WriteString("   ")
 			for _, team := range quadrant[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
-				sb.WriteString(fmt.Sprintf("[%v],", teamStr))
+				teams.WriteString(fmt.Sprintf(" [%v],", teamStr))
 			}
-			m.Row(5, func() {
-				m.Text(sb.String(), namesStyle)
-			})
 
+			m.Row(10, func() {
+				m.Col(2, func() {
+					m.Text(schema.Occupations[occupationN], occupationStyle)
+				})
+				m.Col(10, func() {
+					m.Text(teams.String(), namesStyle)
+				})
+			})
 		}
 
 		m.Row(5, func() {})
@@ -87,20 +89,20 @@ func PrintPDF() error {
 var shiftsStyle = props.Text{
 	Family: consts.Helvetica,
 	Style:  consts.BoldItalic,
-	Align:  consts.Center,
+	Align:  consts.Left,
 	Size:   12,
 }
 
 var occupationStyle = props.Text{
 	Family: consts.Helvetica,
-	Style:  consts.Normal,
-	Align:  consts.Center,
-	Size:   12,
+	Style:  consts.Italic,
+	Align:  consts.Right,
+	Size:   10,
 }
 
 var namesStyle = props.Text{
 	Family: consts.Helvetica,
 	Style:  consts.Normal,
-	Align:  consts.Center,
+	Align:  consts.Left,
 	Size:   10,
 }
