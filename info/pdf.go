@@ -54,28 +54,26 @@ func PrintPDF() error {
 			Width: 0.3,
 		})
 
-		m.Row(5, func() {})
+		m.Row(2, func() {})
 
 		for _, occupationN := range ocuppationNums {
 
 			var teams strings.Builder
 			for _, team := range quadrant[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
-				teams.WriteString(fmt.Sprintf(" %v,", teamStr))
+				teams.WriteString(fmt.Sprintf("%v, ", teamStr))
 			}
 
-			m.Row(10, func() {
+			m.Row(11, func() {
 				m.Col(2, func() {
 					m.Text(schema.Occupations[occupationN], occupationStyle)
 				})
 				m.ColSpace(1)
 				m.Col(9, func() {
-					m.Text(teams.String(), namesStyle)
+					m.Text(strings.TrimSuffix(teams.String(), ", "), namesStyle)
 				})
 			})
 		}
-
-		m.Row(5, func() {})
 	}
 
 	err = m.OutputFileAndClose(pdfFileName)
