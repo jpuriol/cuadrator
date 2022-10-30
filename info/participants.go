@@ -28,11 +28,16 @@ func GetPartipantOccupation(participantName string) ([]Occupation, error) {
 		return nil, err
 	}
 
+	schema, err := getSchema()
+	if err != nil {
+		return nil, err
+	}
+
 	var res []Occupation
 
 	var shiftIDs []int
-	for sID, _ := range quadrantData {
-		shiftIDs = append(shiftIDs, sID)
+	for k := range quadrantData {
+		shiftIDs = append(shiftIDs, k)
 	}
 	sort.Ints(shiftIDs)
 
@@ -43,7 +48,7 @@ func GetPartipantOccupation(participantName string) ([]Occupation, error) {
 					if person == participantName {
 						occup := Occupation{
 							ShifID:         shiftID,
-							OccupationName: getOcupationName(occupationID),
+							OccupationName: schema.ocupationName(occupationID),
 						}
 						res = append(res, occup)
 					}

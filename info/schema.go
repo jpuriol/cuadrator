@@ -26,20 +26,10 @@ func getSchema() (schema, error) {
 	return s, nil
 }
 
-func getShiftName(shiftID int) string {
-	rawData, _ := os.ReadFile(schemaFile)
-
-	var s schema
-	yaml.Unmarshal(rawData, &s)
-
+func (s schema) shiftName(shiftID int) string {
 	return s.Shifts[shiftID]
 }
 
-func getOcupationName(occupationID int) string {
-	rawData, _ := os.ReadFile(schemaFile)
-
-	var s schema
-	yaml.Unmarshal(rawData, &s)
-
+func (s schema) ocupationName(occupationID int) string {
 	return s.Occupations[occupationID]
 }

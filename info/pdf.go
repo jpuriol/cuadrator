@@ -46,7 +46,7 @@ func PrintPDF() error {
 	for _, shiftN := range shiftNums {
 
 		m.Row(5, func() {
-			m.Text(schema.Shifts[shiftN], shiftsStyle)
+			m.Text(schema.shiftName(shiftN), shiftsStyle)
 		})
 
 		m.Line(1.0, props.Line{
@@ -66,7 +66,7 @@ func PrintPDF() error {
 
 			m.Row(11, func() {
 				m.Col(2, func() {
-					m.Text(schema.Occupations[occupationN], occupationStyle)
+					m.Text(schema.ocupationName(occupationN), occupationStyle)
 				})
 				m.ColSpace(1)
 				m.Col(9, func() {
