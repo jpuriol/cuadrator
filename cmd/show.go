@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jpuriol/cuadrator/info"
+	"github.com/jpuriol/cuadrator/data"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +15,14 @@ var showCmd = &cobra.Command{
 	Short: "Show the occupation a partipant has on a specif shift",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		name := strings.Join(args, " ")
+		quadrant, err := data.ReadQuadrant()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 
-		occupations, err := info.GetPartipantOccupation(name)
+		name := strings.Join(args, " ")
+		occupations, err := quadrant.GetOcupation(name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)

@@ -1,4 +1,4 @@
-package info
+package data
 
 import (
 	"fmt"
@@ -14,17 +14,17 @@ const pdfFileName = "quadrant.pdf"
 
 func PrintPDF() error {
 
-	err := Check()
-	if err != nil {
-		return fmt.Errorf("Inconsistent data: %v", err)
-	}
-
-	schema, err := getSchema()
+	quadrant, err := ReadQuadrant()
 	if err != nil {
 		return err
 	}
 
-	quadrant, err := getQuadrantData()
+	err = quadrant.Check()
+	if err != nil {
+		return fmt.Errorf("Inconsistent data: %v", err)
+	}
+
+	schema, err := readSchema()
 	if err != nil {
 		return err
 	}

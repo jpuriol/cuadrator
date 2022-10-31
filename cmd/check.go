@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jpuriol/cuadrator/info"
+	"github.com/jpuriol/cuadrator/data"
 	"github.com/spf13/cobra"
 )
 
@@ -14,8 +14,13 @@ var checkCmd = &cobra.Command{
 	Short: "Check if information is valid",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := info.Check()
+		quadrant, err := data.ReadQuadrant()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 
+		err = quadrant.Check()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
