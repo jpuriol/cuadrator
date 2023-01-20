@@ -15,10 +15,14 @@ github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NH
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/inconshreveable/mousetrap v1.0.1 h1:U3uMjPSQEBMNp1lFxmllqCPM6P5u/Xq7Pgzkat/bFNc=
 github.com/inconshreveable/mousetrap v1.0.1/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/johnfercher/maroto v0.35.0 h1:Cc+RbWllIYq5SII5gZu9B6I0c9drrJvppt2UP3Dx+5w=
 github.com/johnfercher/maroto v0.35.0/go.mod h1:UeLY7evCe2Au8KwHFzaSGffKGADEZK+u6O8C74mdudM=
 github.com/johnfercher/maroto v0.38.0 h1:aFhbk3+rd2WuOOS+z8giqbbHEeb2XjRTEJGcnlY0TE0=
 github.com/johnfercher/maroto v0.38.0/go.mod h1:f9vLjznW+aVsf5R0F90P+PYi2maaYOHq8l07mvOP+ew=
+github.com/johnfercher/maroto v0.39.0 h1:NO0VF5xG+Cq+KkHEtrO6uznJAVXrusufFnOnvvzct2E=
+github.com/johnfercher/maroto v0.39.0/go.mod h1:f9vLjznW+aVsf5R0F90P+PYi2maaYOHq8l07mvOP+ew=
 github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/jung-kurt/gofpdf v1.4.2 h1:3u2ojTwxPPu3ysIOc5iTwcECpvkFCAe2RJ/tQrvfLi0=
 github.com/jung-kurt/gofpdf v1.4.2/go.mod h1:rZsO0wEsunjT/L9stF3fJjYbAHgqNYuQB4B8FWvBck0=
