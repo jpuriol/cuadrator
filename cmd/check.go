@@ -20,11 +20,23 @@ var checkCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		err = quadrant.Check()
+        participants, err := data.ReadParticipants()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
+
+		err = quadrant.CheckNames(participants)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+
+        err = quadrant.CheckShifts()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
 
 		fmt.Println("Cuadrante cuadra!")
 

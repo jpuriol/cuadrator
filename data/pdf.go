@@ -19,12 +19,22 @@ func PrintPDF() error {
 		return err
 	}
 
-	err = quadrant.Check()
+    participants, err := ReadParticipants()
+    if err != nil {
+        return err
+    }
+
+	err = quadrant.CheckNames(participants)
 	if err != nil {
-		return fmt.Errorf("Inconsistent data: %v", err)
+		return err
 	}
 
-	schema, err := readSchema()
+    err = quadrant.CheckShifts()
+    if err != nil {
+        return err
+    }
+
+	schema, err := ReadSchema()
 	if err != nil {
 		return err
 	}
@@ -46,7 +56,7 @@ func PrintPDF() error {
 	for _, shiftN := range shiftNums {
 
 		m.Row(5, func() {
-			m.Text(schema.shiftName(shiftN), shiftsStyle)
+			m.Text(schema.ShiftName(shiftN), shiftsStyle)
 		})
 
 		m.Line(1.0, props.Line{
@@ -66,7 +76,7 @@ func PrintPDF() error {
 
 			m.Row(11, func() {
 				m.Col(2, func() {
-					m.Text(schema.ocupationName(occupationN), occupationStyle)
+					m.Text(schema.OcupationName(occupationN), occupationStyle)
 				})
 				m.ColSpace(1)
 				m.Col(9, func() {

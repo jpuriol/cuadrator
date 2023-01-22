@@ -1,36 +1,23 @@
 package data
 
 import (
-	"os"
+    "github.com/jpuriol/cuadrator/domain"
+    "os"
 
 	"gopkg.in/yaml.v3"
 )
 
-type Schema struct {
-	Name        string
-	Shifts      map[int]string
-	Occupations map[int]string
-}
-
-func readSchema() (Schema, error) {
+func ReadSchema() (domain.Schema, error) {
 	rawData, err := os.ReadFile(schemaFile)
 	if err != nil {
-		return Schema{}, err
+		return domain.Schema{}, err
 	}
 
-	var s Schema
+	var s domain.Schema
 	err = yaml.Unmarshal(rawData, &s)
 	if err != nil {
-		return Schema{}, err
+		return domain.Schema{}, err
 	}
 
 	return s, nil
-}
-
-func (s Schema) shiftName(shiftID int) string {
-	return s.Shifts[shiftID]
-}
-
-func (s Schema) ocupationName(occupationID int) string {
-	return s.Occupations[occupationID]
 }

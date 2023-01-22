@@ -21,15 +21,29 @@ var showCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+        participants, err := data.ReadParticipants()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
+
+        shifts, err := data.ReadSchema()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
+
 		name := strings.Join(args, " ")
-		occupations, err := quadrant.GetOcupation(name)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+
+        if !participants.Exists(name) {
+            fmt.Fprintln(os.Stderr, "Participants is not on participants file")
+            os.Exit(1)
+        }
+
+		occupations := quadrant.GetOcupation(name)
 
 		for _, o := range occupations {
-			fmt.Printf("%v: %q\n", o.ShifID, o.OccupationName)
+			fmt.Printf("%v: %q\n", o.ShifID, shifts.OcupationName(o.OccupationID))
 		}
 
 	},
