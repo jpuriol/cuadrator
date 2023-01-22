@@ -5,9 +5,11 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+    "fmt"
+    "os"
 
-	"github.com/spf13/cobra"
+    "github.com/jpuriol/cuadrator/data"
+    "github.com/spf13/cobra"
 )
 
 // statsCmd represents the stats command
@@ -16,20 +18,28 @@ var statsCmd = &cobra.Command{
 	Short: "Show how many participants we have per shift",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("stats called")
+        quadrant, err := data.ReadQuadrant()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
+
+        shifts, err := data.ReadSchema()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+            os.Exit(1)
+        }
+
+		for shiftID, shift := range quadrant {
+            fmt.Printf("%d -> [%s]\n", shiftID, shifts.ShiftName(shiftID))
+            for ocuppationID, teams := range shift {
+                fmt.Printf(" - %s: %d\n", shifts.OcupationName(ocuppationID), len(teams))
+            }
+
+        }
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(statsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// statsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// statsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
