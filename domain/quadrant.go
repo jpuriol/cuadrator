@@ -39,6 +39,16 @@ func (q Quadrant) CheckShifts() error {
 	return nil
 }
 
+func (q Quadrant) OrderedShiftIDs() []int {
+    var shiftIDs []int
+    for k := range q {
+        shiftIDs = append(shiftIDs, k)
+    }
+    sort.Ints(shiftIDs)
+
+    return shiftIDs
+}
+
 type Occupation struct {
 	ShifID       int
 	OccupationID int
@@ -48,13 +58,7 @@ func (q Quadrant) GetOcupation(participantName string) []Occupation {
 
 	var ocupations []Occupation
 
-	var shiftIDs []int
-	for k := range q {
-		shiftIDs = append(shiftIDs, k)
-	}
-	sort.Ints(shiftIDs)
-
-	for _, shiftID := range shiftIDs {
+	for _, shiftID := range q.OrderedShiftIDs() {
 		for occupationID, occupation := range q[shiftID] {
 			for _, team := range occupation {
 				for _, person := range team {

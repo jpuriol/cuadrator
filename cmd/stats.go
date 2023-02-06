@@ -30,9 +30,11 @@ var statsCmd = &cobra.Command{
             os.Exit(1)
         }
 
-		for shiftID, shift := range quadrant {
+		for  _, shiftID := range quadrant.OrderedShiftIDs() {
             fmt.Printf("%d -> [%s]\n", shiftID, shifts.ShiftName(shiftID))
-            for ocuppationID, teams := range shift {
+            shift := quadrant[shiftID]
+            for _, ocuppationID := range shift.OrderedOcuppationIDs() {
+                teams := shift[ocuppationID]
                 fmt.Printf(" - %s: %d\n", shifts.OcupationName(ocuppationID), len(teams))
             }
 
