@@ -36,11 +36,16 @@ var showCmd = &cobra.Command{
 		name := strings.Join(args, " ")
 
         if !participants.Exists(name) {
-            fmt.Fprintln(os.Stderr, "Participants is not on participants file")
+            fmt.Fprintf(os.Stderr, "Participant %q is not on participants file\n", name)
             os.Exit(1)
         }
 
 		occupations := quadrant.GetOcupation(name)
+
+        if (len(occupations) == 0) {
+            fmt.Printf("No ocuppations for participant %q\n", name);
+            return
+        }
 
 		for _, o := range occupations {
 			fmt.Printf("%v: %q\n", o.ShifID, shifts.OcupationName(o.OccupationID))
