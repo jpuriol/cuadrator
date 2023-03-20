@@ -42,7 +42,7 @@ var showCmd = &cobra.Command{
 
 		occupations := quadrant.GetOcupation(name)
 
-        if (len(occupations) == 0) {
+        if len(occupations) == 0 {
             fmt.Printf("No ocuppations for participant %q\n", name);
             return
         }
