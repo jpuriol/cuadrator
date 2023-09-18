@@ -1,6 +1,6 @@
 module github.com/jpuriol/cuadrator
 
-go 1.19
+go 1.20
 
 require (
 	github.com/johnfercher/maroto v1.0.0
