@@ -9,7 +9,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cuadrator",
-	Short: "Helper to create quadrants, by jpuriol CTEA",
+	Short: "Tool to create quadrants, by jpuriol",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
