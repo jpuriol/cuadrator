@@ -53,6 +53,10 @@ func PrintPDF() error {
 
 	m := pdf.NewMaroto(consts.Portrait, consts.A4)
 
+	m.Row(10, func() {
+		m.Text(schema.Name, headerStyle)
+	})
+
 	for _, shiftN := range shiftNums {
 
 		m.Row(5, func() {
@@ -94,9 +98,16 @@ func PrintPDF() error {
 	return nil
 }
 
+var headerStyle = props.Text{
+	Family: consts.Helvetica,
+	Style:  consts.Italic,
+	Align:  consts.Center,
+	Size:   12,
+	}
+
 var shiftsStyle = props.Text{
 	Family: consts.Helvetica,
-	Style:  consts.BoldItalic,
+	Style:  consts.Bold,
 	Align:  consts.Left,
 	Size:   12,
 }

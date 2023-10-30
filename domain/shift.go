@@ -19,12 +19,12 @@ func (s Shift) nameFrequency() map[string]int {
 }
 
 func (s Shift) OrderedOcuppationIDs() []int {
-    ocuppationIDs := make([]int, 0, len(s))
+	ocuppationIDs := make([]int, 0, len(s))
 
-    for k := range s {
-        ocuppationIDs = append(ocuppationIDs, k)
-    }
-    sort.Ints(ocuppationIDs)
+	for k := range s {
+		ocuppationIDs = append(ocuppationIDs, k)
+	}
+	sort.Ints(ocuppationIDs)
 
-    return ocuppationIDs
+	return ocuppationIDs
 }

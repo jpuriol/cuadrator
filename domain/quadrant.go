@@ -40,13 +40,13 @@ func (q Quadrant) CheckShifts() error {
 }
 
 func (q Quadrant) OrderedShiftIDs() []int {
-    var shiftIDs []int
-    for k := range q {
-        shiftIDs = append(shiftIDs, k)
-    }
-    sort.Ints(shiftIDs)
+	var shiftIDs []int
+	for k := range q {
+		shiftIDs = append(shiftIDs, k)
+	}
+	sort.Ints(shiftIDs)
 
-    return shiftIDs
+	return shiftIDs
 }
 
 type Occupation struct {
