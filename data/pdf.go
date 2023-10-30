@@ -78,6 +78,11 @@ func PrintPDF() error {
 				teams.WriteString(fmt.Sprintf("%v, ", teamStr))
 			}
 
+			teamsText := strings.TrimSuffix(teams.String(), ", ")
+			if teamsText == "" {
+				continue
+			}
+
 			m.Row(11, func() {
 				m.Col(2, func() {
 					m.Text(schema.OcupationName(occupationN), occupationStyle)
