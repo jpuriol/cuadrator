@@ -10,7 +10,6 @@ import (
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
-const pdfFileName = "quadrant.pdf"
 
 func PrintPDF() error {
 
@@ -94,6 +93,8 @@ func PrintPDF() error {
 			})
 		}
 	}
+
+	pdfFileName := fmt.Sprintf("%s.pdf", schema.Name)
 
 	err = m.OutputFileAndClose(pdfFileName)
 	if err != nil {
