@@ -5,11 +5,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/johnfercher/maroto/pkg/consts"
-	"github.com/johnfercher/maroto/pkg/pdf"
-	"github.com/johnfercher/maroto/pkg/props"
+	"github.com/johnfercher/maroto/v2"
+	"github.com/johnfercher/maroto/v2/pkg/components/line"
+	"github.com/johnfercher/maroto/v2/pkg/components/text"
+	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 )
-
 
 func PrintPDF() error {
 
@@ -18,20 +19,20 @@ func PrintPDF() error {
 		return err
 	}
 
-    participants, err := ReadParticipants()
-    if err != nil {
-        return err
-    }
+	participants, err := ReadParticipants()
+	if err != nil {
+		return err
+	}
 
 	err = quadrant.CheckNames(participants)
 	if err != nil {
 		return err
 	}
 
-    err = quadrant.CheckShifts()
-    if err != nil {
-        return err
-    }
+	err = quadrant.CheckShifts()
+	if err != nil {
+		return err
+	}
 
 	schema, err := ReadSchema()
 	if err != nil {
@@ -50,24 +51,19 @@ func PrintPDF() error {
 	}
 	sort.Ints(ocuppationNums)
 
-	m := pdf.NewMaroto(consts.Portrait, consts.A4)
+	m := maroto.New()
 
-	m.Row(10, func() {
-		m.Text(schema.Name, headerStyle)
-	})
+	m.AddRow(10, text.NewCol(12, schema.Name))
 
 	for _, shiftN := range shiftNums {
 
-		m.Row(5, func() {
-			m.Text(schema.ShiftName(shiftN), shiftsStyle)
-		})
+		m.AddRow(5, text.NewCol(12, schema.ShiftName(shiftN)))
 
-		m.Line(1.0, props.Line{
-			Style: consts.Dashed,
-			Width: 0.3,
-		})
-
-		m.Row(2, func() {})
+		m.AddRow(2,
+			line.NewCol(12, props.Line{
+				Style:         linestyle.Dashed,
+				OffsetPercent: 0,
+			}))
 
 		for _, occupationN := range ocuppationNums {
 
@@ -82,21 +78,20 @@ func PrintPDF() error {
 				continue
 			}
 
-			m.Row(11, func() {
-				m.Col(2, func() {
-					m.Text(schema.OcupationName(occupationN), occupationStyle)
-				})
-				m.ColSpace(1)
-				m.Col(9, func() {
-					m.Text(strings.TrimSuffix(teams.String(), ", "), namesStyle)
-				})
-			})
+			m.AddRow(11,
+				text.NewCol(3, schema.OcupationName(occupationN)),
+				text.NewCol(9, teamsText),
+			)
 		}
 	}
 
-	pdfFileName := fmt.Sprintf("%s.pdf", schema.Name)
+	document, err := m.Generate()
+	if err != nil {
+		return err
+	}
 
-	err = m.OutputFileAndClose(pdfFileName)
+	pdfFileName := fmt.Sprintf("%s.pdf", schema.Name)
+	err = document.Save(pdfFileName)
 	if err != nil {
 		return err
 	}
@@ -105,29 +100,5 @@ func PrintPDF() error {
 }
 
 var headerStyle = props.Text{
-	Family: consts.Helvetica,
-	Style:  consts.Italic,
-	Align:  consts.Center,
-	Size:   12,
-	}
-
-var shiftsStyle = props.Text{
-	Family: consts.Helvetica,
-	Style:  consts.Bold,
-	Align:  consts.Left,
-	Size:   12,
-}
-
-var occupationStyle = props.Text{
-	Family: consts.Helvetica,
-	Style:  consts.Italic,
-	Align:  consts.Right,
-	Size:   10,
-}
-
-var namesStyle = props.Text{
-	Family: consts.Helvetica,
-	Style:  consts.Normal,
-	Align:  consts.Left,
-	Size:   10,
+	Size: 16,
 }
