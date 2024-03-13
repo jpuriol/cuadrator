@@ -61,8 +61,7 @@ func PrintPDF() error {
 
 		m.AddRow(2,
 			line.NewCol(12, props.Line{
-				Style:         linestyle.Dashed,
-				OffsetPercent: 0,
+				Style: linestyle.Dashed,
 			}))
 
 		for _, occupationN := range ocuppationNums {
@@ -97,8 +96,4 @@ func PrintPDF() error {
 	}
 
 	return nil
-}
-
-var headerStyle = props.Text{
-	Size: 16,
 }
