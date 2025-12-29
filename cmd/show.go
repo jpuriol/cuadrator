@@ -15,40 +15,28 @@ var showCmd = &cobra.Command{
 	Short: "Show the occupation a partipant has on a specif shift",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		quadrant, err := data.ReadQuadrant()
+		d, err := data.LoadAll()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
-        participants, err := data.ReadParticipants()
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-            os.Exit(1)
-        }
-
-        shifts, err := data.ReadSchema()
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-            os.Exit(1)
-        }
-
 		name := strings.Join(args, " ")
 
-        if !participants.Exists(name) {
-            fmt.Fprintf(os.Stderr, "Participant %q is not on participants file\n", name)
-            os.Exit(1)
-        }
+		if !d.Participants.Exists(name) {
+			fmt.Fprintf(os.Stderr, "Participant %q is not on participants file\n", name)
+			os.Exit(1)
+		}
 
-		occupations := quadrant.GetOcupation(name)
+		occupations := d.Quadrant.GetOccupation(name)
 
-        if len(occupations) == 0 {
-            fmt.Printf("No ocuppations for participant %q\n", name);
-            return
-        }
+		if len(occupations) == 0 {
+			fmt.Printf("No occupations for participant %q\n", name)
+			return
+		}
 
 		for _, o := range occupations {
-			fmt.Printf("%v: %q\n", o.ShifID, shifts.OcupationName(o.OccupationID))
+			fmt.Printf("%v: %q\n", o.ShiftID, d.Schema.OccupationName(o.OccupationID))
 		}
 
 	},

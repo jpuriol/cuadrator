@@ -1,8 +1,8 @@
 package data
 
 import (
-    "github.com/jpuriol/cuadrator/domain"
-    "os"
+	"github.com/jpuriol/cuadrator/domain"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -10,13 +10,18 @@ import (
 func ReadParticipants() (domain.Participants, error) {
 	data, err := os.ReadFile(participantsFile)
 	if err != nil {
-		return []string{}, err
+		return nil, err
 	}
 
-	var participants domain.Participants
-	err = yaml.Unmarshal(data, &participants)
+	var names []string
+	err = yaml.Unmarshal(data, &names)
 	if err != nil {
-		return []string{}, err
+		return nil, err
+	}
+
+	participants := make(domain.Participants)
+	for _, name := range names {
+		participants[name] = struct{}{}
 	}
 
 	return participants, nil

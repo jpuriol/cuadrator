@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type Schema struct {
 	Name        string
 	Shifts      map[int]string
@@ -7,9 +9,17 @@ type Schema struct {
 }
 
 func (s Schema) ShiftName(shiftID int) string {
-	return s.Shifts[shiftID]
+	name, ok := s.Shifts[shiftID]
+	if !ok {
+		return fmt.Sprintf("Unknown Shift %d", shiftID)
+	}
+	return name
 }
 
-func (s Schema) OcupationName(occupationID int) string {
-	return s.Occupations[occupationID]
+func (s Schema) OccupationName(occupationID int) string {
+	name, ok := s.Occupations[occupationID]
+	if !ok {
+		return fmt.Sprintf("Unknown Occupation %d", occupationID)
+	}
+	return name
 }

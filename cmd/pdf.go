@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jpuriol/cuadrator/data"
+	"github.com/jpuriol/cuadrator/exporter"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var pdfCmd = &cobra.Command{
 	Short: "Generate a pdf document with the cuadrant information",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := data.PrintPDF()
+		err := exporter.PrintPDF()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)

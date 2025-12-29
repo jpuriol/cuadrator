@@ -1,13 +1,8 @@
 package domain
 
-type Participants []string
+type Participants map[string]struct{}
 
 func (p Participants) Exists(name string) bool {
-	for _, pName := range p {
-		if name == pName {
-			return true
-		}
-	}
-
-	return false
+	_, ok := p[name]
+	return ok
 }

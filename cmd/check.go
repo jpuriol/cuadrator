@@ -14,29 +14,23 @@ var checkCmd = &cobra.Command{
 	Short: "Check if information is valid",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		quadrant, err := data.ReadQuadrant()
+		d, err := data.LoadAll()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
-        participants, err := data.ReadParticipants()
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-            os.Exit(1)
-        }
-
-		err = quadrant.CheckNames(participants)
+		err = d.Quadrant.ValidateNames(d.Participants)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
-        err = quadrant.CheckShifts()
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-            os.Exit(1)
-        }
+		err = d.Quadrant.ValidateShifts()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 
 		fmt.Println("Cuadrante cuadra!")
 

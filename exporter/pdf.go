@@ -1,4 +1,4 @@
-package data
+package exporter
 
 import (
 	"fmt"
@@ -10,64 +10,54 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
 	"github.com/johnfercher/maroto/v2/pkg/props"
+	"github.com/jpuriol/cuadrator/data"
 )
 
 func PrintPDF() error {
-
-	quadrant, err := ReadQuadrant()
+	d, err := data.LoadAll()
 	if err != nil {
 		return err
 	}
 
-	participants, err := ReadParticipants()
+	err = d.Quadrant.ValidateNames(d.Participants)
 	if err != nil {
 		return err
 	}
 
-	err = quadrant.CheckNames(participants)
-	if err != nil {
-		return err
-	}
-
-	err = quadrant.CheckShifts()
-	if err != nil {
-		return err
-	}
-
-	schema, err := ReadSchema()
+	err = d.Quadrant.ValidateShifts()
 	if err != nil {
 		return err
 	}
 
 	var shiftNums []int
-	for k := range schema.Shifts {
+	for k := range d.Schema.Shifts {
 		shiftNums = append(shiftNums, k)
 	}
 	sort.Ints(shiftNums)
 
-	var ocuppationNums []int
-	for k := range schema.Occupations {
-		ocuppationNums = append(ocuppationNums, k)
+	var occupationNums []int
+	for k := range d.Schema.Occupations {
+		occupationNums = append(occupationNums, k)
 	}
-	sort.Ints(ocuppationNums)
+	sort.Ints(occupationNums)
 
 	m := maroto.New()
 
-	m.AddRow(10, text.NewCol(12, schema.Name))
+	m.AddRow(10, text.NewCol(12, d.Schema.Name))
 
 	for _, shiftN := range shiftNums {
 
-		m.AddRow(5, text.NewCol(12, schema.ShiftName(shiftN)))
+		m.AddRow(5, text.NewCol(12, d.Schema.ShiftName(shiftN)))
 
 		m.AddRow(2,
 			line.NewCol(12, props.Line{
 				Style: linestyle.Dashed,
 			}))
 
-		for _, occupationN := range ocuppationNums {
+		for _, occupationN := range occupationNums {
 
 			var teams strings.Builder
-			for _, team := range quadrant[shiftN][occupationN] {
+			for _, team := range d.Quadrant[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
 				teams.WriteString(fmt.Sprintf("%v, ", teamStr))
 			}
@@ -78,7 +68,7 @@ func PrintPDF() error {
 			}
 
 			m.AddRow(11,
-				text.NewCol(3, schema.OcupationName(occupationN)),
+				text.NewCol(3, d.Schema.OccupationName(occupationN)),
 				text.NewCol(9, teamsText),
 			)
 		}
@@ -89,7 +79,7 @@ func PrintPDF() error {
 		return err
 	}
 
-	pdfFileName := fmt.Sprintf("%s.pdf", schema.Name)
+	pdfFileName := fmt.Sprintf("%s.pdf", d.Schema.Name)
 	err = document.Save(pdfFileName)
 	if err != nil {
 		return err
