@@ -5,6 +5,8 @@ import "fmt"
 // Schema defines the structure of the quadrant, including names for shifts and occupations.
 type Schema struct {
 	Name         string         // Name of the quadrant
+	Title        string         // Title for the PDF
+	Subtitle     string         // Subtitle for the PDF
 	Shifts       map[int]string // Mapping of shift IDs to names
 	Occupations  map[int]string // Mapping of occupation IDs to names
 	NoOccupation string         `yaml:"no_occupation"` // Name for when no occupation is assigned

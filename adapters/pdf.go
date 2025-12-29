@@ -7,8 +7,13 @@ import (
 
 	"github.com/johnfercher/maroto/v2"
 	"github.com/johnfercher/maroto/v2/pkg/components/line"
+	"github.com/johnfercher/maroto/v2/pkg/components/row"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontfamily"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
 	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
+	marotoCore "github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
 	"github.com/jpuriol/cuadrator/core"
 )
@@ -39,33 +44,91 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 
 	m := maroto.New()
 
-	m.AddRow(10, text.NewCol(12, s.Name))
+	// Header
+	m.AddRow(15,
+		text.NewCol(12, s.Title, props.Text{
+			Top:    5,
+			Size:   20,
+			Style:  fontstyle.Bold,
+			Align:  align.Center,
+			Family: fontfamily.Helvetica,
+		}),
+	)
+
+	if s.Subtitle != "" {
+		m.AddRow(10,
+			text.NewCol(12, s.Subtitle, props.Text{
+				Size:   14,
+				Style:  fontstyle.Italic,
+				Align:  align.Center,
+				Family: fontfamily.Helvetica,
+			}),
+		)
+	}
+
+	m.AddRow(5) // Spacer after title
 
 	for _, shiftN := range shiftNums {
+		var shiftRows []marotoCore.Row
 
-		m.AddRow(5, text.NewCol(12, s.ShiftName(shiftN)))
+		shiftRows = append(shiftRows,
+			row.New(2).Add(
+				line.NewCol(12, props.Line{
+					Style:     linestyle.Solid,
+					Thickness: 0.3,
+				}),
+			),
+		)
 
-		m.AddRow(2,
-			line.NewCol(12, props.Line{
-				Style: linestyle.Dashed,
-			}))
+		// Shift Title Row
+		shiftRows = append(shiftRows,
+			row.New(6).Add(
+				text.NewCol(12, s.ShiftName(shiftN), props.Text{
+					Size:   10,
+					Style:  fontstyle.Bold,
+					Align:  align.Center,
+					Family: fontfamily.Courier,
+				}),
+			),
+		)
+
+		shiftRows = append(shiftRows,
+			row.New(2).Add(
+				line.NewCol(12, props.Line{
+					Style:     linestyle.Solid,
+					Thickness: 0.3,
+				}),
+			),
+		)
 
 		for _, occupationN := range occupationNums {
-
 			var teams strings.Builder
 			for _, team := range q[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
-				teams.WriteString(fmt.Sprintf("%v, ", teamStr))
+				teams.WriteString(fmt.Sprintf("%v / ", teamStr))
 			}
 
-			teamsText := strings.TrimSuffix(teams.String(), ", ")
+			teamsText := strings.TrimSuffix(teams.String(), " / ")
 			if teamsText == "" {
 				continue
 			}
 
-			m.AddRow(11,
-				text.NewCol(3, s.OccupationName(occupationN)),
-				text.NewCol(9, teamsText),
+			shiftRows = append(shiftRows,
+				row.New(8).Add(
+					text.NewCol(4, s.OccupationName(occupationN), props.Text{
+						Right:  5,
+						Top:    1,
+						Style:  fontstyle.Bold,
+						Size:   9,
+						Family: fontfamily.Courier,
+						Align:  align.Right,
+					}),
+					text.NewCol(8, teamsText, props.Text{
+						Top:    1,
+						Size:   9,
+						Family: fontfamily.Courier,
+					}),
+				),
 			)
 		}
 
@@ -79,12 +142,42 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 			}
 			sort.Strings(free)
 			if len(free) > 0 {
-				m.AddRow(11,
-					text.NewCol(3, s.NoOccupation),
-					text.NewCol(9, strings.Join(free, ", ")),
+				// Spacer
+				shiftRows = append(shiftRows, row.New(2))
+
+				shiftRows = append(shiftRows,
+					row.New(2).Add(
+						line.NewCol(12, props.Line{
+							Style:     linestyle.Dashed,
+							Thickness: 0.1,
+						}),
+					),
+				)
+				shiftRows = append(shiftRows,
+					row.New(8).Add(
+						text.NewCol(4, s.NoOccupation, props.Text{
+							Right:  5,
+							Top:    1,
+							Style:  fontstyle.Italic,
+							Size:   7,
+							Family: fontfamily.Courier,
+							Align:  align.Right,
+						}),
+						text.NewCol(8, strings.Join(free, ", "), props.Text{
+							Top:    1,
+							Style:  fontstyle.Italic,
+							Size:   7,
+							Family: fontfamily.Courier,
+						}),
+					),
 				)
 			}
 		}
+
+		// Spacer
+		shiftRows = append(shiftRows, row.New(5))
+
+		m.AddRows(shiftRows...)
 	}
 
 	document, err := m.Generate()
