@@ -21,14 +21,40 @@ var statsCmd = &cobra.Command{
 			return err
 		}
 
-		for _, shiftID := range d.Quadrant.OrderedShiftIDs() {
-			fmt.Printf("%d -> [%s]\n", shiftID, d.Schema.ShiftName(shiftID))
-			shift := d.Quadrant[shiftID]
-			for _, occupationID := range shift.OrderedOccupationIDs() {
-				teams := shift[occupationID]
-				fmt.Printf(" %s: %d\n", d.Schema.OccupationName(occupationID), len(teams))
+		maxOccupationLen := 0
+		for _, name := range d.Schema.Occupations {
+			if len(name) > maxOccupationLen {
+				maxOccupationLen = len(name)
 			}
+		}
 
+		for _, shiftID := range d.Quadrant.OrderedShiftIDs() {
+			shiftName := d.Schema.ShiftName(shiftID)
+			header := fmt.Sprintf(" %s ", shiftName)
+			separator := ""
+			for i := 0; i < len(header); i++ {
+				separator += "-"
+			}
+			fmt.Printf("%s\n", separator)
+			fmt.Printf("%s\n", header)
+			fmt.Printf("%s\n", separator)
+			shift := d.Quadrant[shiftID]
+			occupationIDs := shift.OrderedOccupationIDs()
+			for i := 0; i < len(occupationIDs); i += 2 {
+				line := ""
+				for j := 0; j < 2 && i+j < len(occupationIDs); j++ {
+					occupationID := occupationIDs[i+j]
+					teams := shift[occupationID]
+					count := len(teams)
+					bar := ""
+					for k := 0; k < count; k++ {
+						bar += "█"
+					}
+					line += fmt.Sprintf(" %*s | %-12s (%d)  ", maxOccupationLen, d.Schema.OccupationName(occupationID), bar, count)
+				}
+				fmt.Println(line)
+			}
+			fmt.Println()
 		}
 		return nil
 	},
