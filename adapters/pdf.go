@@ -13,6 +13,7 @@ import (
 	"github.com/jpuriol/cuadrator/core"
 )
 
+// WritePDF generates a PDF file representing the quadrant according to the provided participants and schema.
 func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 	err := q.ValidateNames(p)
 	if err != nil {

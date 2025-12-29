@@ -2,8 +2,10 @@ package core
 
 import "sort"
 
+// Shift maps occupation IDs to a list of teams assigned to that occupation.
 type Shift map[int][]Team
 
+// NameFrequency counts the number of times each participant appears in the shift.
 func (s Shift) NameFrequency() map[string]int {
 	frequency := make(map[string]int)
 
@@ -18,6 +20,7 @@ func (s Shift) NameFrequency() map[string]int {
 	return frequency
 }
 
+// OrderedOccupationIDs returns the occupation IDs sorted in ascending order.
 func (s Shift) OrderedOccupationIDs() []int {
 	occupationIDs := make([]int, 0, len(s))
 

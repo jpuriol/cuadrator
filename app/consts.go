@@ -11,12 +11,14 @@ const (
 	quadrantFile     = "quadrant.yaml"
 )
 
+// FullData holds all the information required to generate a quadrant.
 type FullData struct {
-	Quadrant     core.Quadrant
-	Participants core.Participants
-	Schema       core.Schema
+	Quadrant     core.Quadrant     // The scheduled shifts and occupations
+	Participants core.Participants // The list of available participants
+	Schema       core.Schema       // The names and structure of the quadrant
 }
 
+// LoadAll reads quadrant, participants, and schema from their respective YAML files.
 func LoadAll() (*FullData, error) {
 	q, err := adapters.ReadQuadrant(quadrantFile)
 	if err != nil {
@@ -40,6 +42,7 @@ func LoadAll() (*FullData, error) {
 	}, nil
 }
 
+// GeneratePDF loads all data and generates the quadrant PDF.
 func GeneratePDF() error {
 	d, err := LoadAll()
 	if err != nil {

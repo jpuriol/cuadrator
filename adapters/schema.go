@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ReadSchema reads the schema configuration from a YAML file.
 func ReadSchema(filename string) (core.Schema, error) {
 	rawData, err := os.ReadFile(filename)
 	if err != nil {

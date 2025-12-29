@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ReadQuadrant reads the quadrant data from a YAML file.
 func ReadQuadrant(filename string) (core.Quadrant, error) {
 	rawData, err := os.ReadFile(filename)
 	if err != nil {

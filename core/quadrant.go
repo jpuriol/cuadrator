@@ -5,9 +5,10 @@ import (
 	"sort"
 )
 
+// Quadrant represents the full schedule, mapping shift IDs to Shift data.
 type Quadrant map[int]Shift
 
-// ValidateNames checks that all the names in quadrant belong to participants
+// ValidateNames ensures all names in the quadrant are valid participants.
 func (q Quadrant) ValidateNames(p Participants) error {
 
 	for shiftID, shift := range q {
@@ -22,7 +23,7 @@ func (q Quadrant) ValidateNames(p Participants) error {
 	return nil
 }
 
-// ValidateShifts checks that the same person is not twice on the same shift
+// ValidateShifts ensures no participant is assigned more than once to the same shift.
 func (q Quadrant) ValidateShifts() error {
 	for shiftID, shift := range q {
 		nameFreq := shift.NameFrequency()
@@ -37,6 +38,7 @@ func (q Quadrant) ValidateShifts() error {
 	return nil
 }
 
+// OrderedShiftIDs returns the shift IDs sorted in ascending order.
 func (q Quadrant) OrderedShiftIDs() []int {
 	var shiftIDs []int
 	for k := range q {
@@ -47,11 +49,13 @@ func (q Quadrant) OrderedShiftIDs() []int {
 	return shiftIDs
 }
 
+// Occupation represents a participant's assignment to a specific shift and occupation.
 type Occupation struct {
-	ShiftID      int
-	OccupationID int
+	ShiftID      int // ID of the shift
+	OccupationID int // ID of the occupation
 }
 
+// GetOccupation returns all assignments for a given participant.
 func (q Quadrant) GetOccupation(participantName string) []Occupation {
 	var occupations []Occupation
 

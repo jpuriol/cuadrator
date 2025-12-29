@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ReadParticipants reads a list of participant names from a YAML file.
 func ReadParticipants(filename string) (core.Participants, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
