@@ -1,51 +1,82 @@
 # Cuadrator
 
-Cuadrator es una herramienta escrita en Go para gestionar y generar cuadrantes de turnos de forma sencilla. Permite definir participantes, turnos y ocupaciones mediante archivos YAML y generar un documento PDF con el resultado.
+Cuadrator is a tool written in Go to easily manage and generate shift quadrants. It allows defining participants, shifts, and occupations using YAML files and generating a PDF document with the result.
 
-## Comandos Disponibles
+## Available Commands
 
-La herramienta ofrece varios comandos para interactuar con los datos del cuadrante:
+The tool offers several commands to interact with the quadrant data:
 
-- `check`: Verifica si la información contenida en los archivos YAML es válida y consistente.
-- `pdf`: Genera un documento PDF con la información del cuadrante.
-- `show`: Muestra la ocupación que tiene un participante en un turno específico.
-- `stats`: Muestra estadísticas sobre cuántos participantes hay por cada turno.
+- `check`: Verifies if the information contained in the YAML files is valid and consistent.
+- `pdf`: Generates a PDF document with the quadrant information.
+- `stats`: Shows statistics about how many participants there are for each shift.
+- `tui`: Interactive Terminal User Interface to view participant occupations.
 
-Para ver la ayuda detallada de cualquier comando, puedes ejecutar:
+To see the detailed help for any command, you can run:
 ```bash
-./cuadrator [comando] --help
+./cuadrator [command] --help
 ```
 
-## Configuración
+## Configuration
 
-El proyecto utiliza tres archivos principales de configuración en formato YAML:
+The project uses three main configuration files in YAML format:
 
 ### `participants.yaml`
-Contiene la lista de nombres de los participantes que pueden ser asignados al cuadrante.
+Contains the list of names of the participants who can be assigned to the quadrant.
+
+Example:
+```yaml
+- Alice
+- Bob
+- Charlie
+```
 
 ### `schema.yaml`
-Define la estructura del cuadrante:
-- **name**: Nombre del cuadrante (ej. "Marzo 2023").
-- **shifts**: Definición de los horarios de los turnos.
-- **occupations**: Lista de las diferentes tareas u ocupaciones disponibles.
+Defines the structure of the quadrant:
+- **name**: Name of the quadrant.
+- **shifts**: Definition of the shift schedules.
+- **occupations**: List of the different tasks or occupations available.
+
+Example:
+```yaml
+name: "Shift Schedule 2023"
+shifts:
+  1: "08:00-12:00"
+  2: "12:00-16:00"
+occupations:
+  1: "Reception"
+  2: "Security"
+```
 
 ### `quadrant.yaml`
-Contiene la asignación real de los participantes a los turnos y ocupaciones definidos en el esquema.
+Contains the actual assignment of participants to the shifts and occupations defined in the schema.
 
-## Instalación y Uso
+Example:
+```yaml
+1: # Shift ID
+  1: # Occupation ID
+    - [Alice]
+    - [Bob]
+  2:
+    - [Charlie, Dave] # A team of two
+2:
+  1:
+    - [Eve]
+```
 
-Si tienes Go instalado, puedes compilar el proyecto ejecutando:
+## Installation and Usage
+
+If you have Go installed, you can compile the project by running:
 
 ```bash
 go build -o cuadrator ./cmd/cuadrator/main.go
 ```
 
-Luego, puedes ejecutar los comandos mencionados anteriormente:
+Then, you can run the commands mentioned above:
 
 ```bash
 ./cuadrator check
 ./cuadrator pdf
 ```
 
-## Autor
-Desarrollado por jpuriol.
+## Author
+Developed by jpuriol.
