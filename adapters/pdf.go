@@ -1,4 +1,4 @@
-package exporter
+package adapters
 
 import (
 	"fmt"
@@ -10,44 +10,39 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
 	"github.com/johnfercher/maroto/v2/pkg/props"
-	"github.com/jpuriol/cuadrator/data"
+	"github.com/jpuriol/cuadrator/core"
 )
 
-func PrintPDF() error {
-	d, err := data.LoadAll()
+func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
+	err := q.ValidateNames(p)
 	if err != nil {
 		return err
 	}
 
-	err = d.Quadrant.ValidateNames(d.Participants)
-	if err != nil {
-		return err
-	}
-
-	err = d.Quadrant.ValidateShifts()
+	err = q.ValidateShifts()
 	if err != nil {
 		return err
 	}
 
 	var shiftNums []int
-	for k := range d.Schema.Shifts {
+	for k := range s.Shifts {
 		shiftNums = append(shiftNums, k)
 	}
 	sort.Ints(shiftNums)
 
 	var occupationNums []int
-	for k := range d.Schema.Occupations {
+	for k := range s.Occupations {
 		occupationNums = append(occupationNums, k)
 	}
 	sort.Ints(occupationNums)
 
 	m := maroto.New()
 
-	m.AddRow(10, text.NewCol(12, d.Schema.Name))
+	m.AddRow(10, text.NewCol(12, s.Name))
 
 	for _, shiftN := range shiftNums {
 
-		m.AddRow(5, text.NewCol(12, d.Schema.ShiftName(shiftN)))
+		m.AddRow(5, text.NewCol(12, s.ShiftName(shiftN)))
 
 		m.AddRow(2,
 			line.NewCol(12, props.Line{
@@ -57,7 +52,7 @@ func PrintPDF() error {
 		for _, occupationN := range occupationNums {
 
 			var teams strings.Builder
-			for _, team := range d.Quadrant[shiftN][occupationN] {
+			for _, team := range q[shiftN][occupationN] {
 				teamStr := strings.Join(team, "-")
 				teams.WriteString(fmt.Sprintf("%v, ", teamStr))
 			}
@@ -68,7 +63,7 @@ func PrintPDF() error {
 			}
 
 			m.AddRow(11,
-				text.NewCol(3, d.Schema.OccupationName(occupationN)),
+				text.NewCol(3, s.OccupationName(occupationN)),
 				text.NewCol(9, teamsText),
 			)
 		}
@@ -79,7 +74,7 @@ func PrintPDF() error {
 		return err
 	}
 
-	pdfFileName := fmt.Sprintf("%s.pdf", d.Schema.Name)
+	pdfFileName := fmt.Sprintf("%s.pdf", s.Name)
 	err = document.Save(pdfFileName)
 	if err != nil {
 		return err

@@ -1,4 +1,4 @@
-package domain
+package core
 
 type Participants map[string]struct{}
 

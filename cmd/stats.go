@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/jpuriol/cuadrator/data"
+	"github.com/jpuriol/cuadrator/app"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ var statsCmd = &cobra.Command{
 	Short: "Show how many participants we have per shift",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		d, err := data.LoadAll()
+		d, err := app.LoadAll()
 		if err != nil {
 			return err
 		}

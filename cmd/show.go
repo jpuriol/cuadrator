@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jpuriol/cuadrator/data"
+	"github.com/jpuriol/cuadrator/app"
 	"github.com/spf13/cobra"
 )
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
 	Use:   "show",
-	Short: "Show the occupation a partipant has on a specif shift",
+	Short: "Show the occupation a participant has on a specif shift",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		d, err := data.LoadAll()
+		d, err := app.LoadAll()
 		if err != nil {
 			return err
 		}

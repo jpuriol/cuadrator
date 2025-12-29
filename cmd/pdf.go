@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/jpuriol/cuadrator/exporter"
+	"github.com/jpuriol/cuadrator/app"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ var pdfCmd = &cobra.Command{
 	Short: "Generate a pdf document with the cuadrant information",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := exporter.PrintPDF()
+		err := app.GeneratePDF()
 		if err != nil {
 			return err
 		}

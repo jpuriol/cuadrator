@@ -1,14 +1,14 @@
-package data
+package adapters
 
 import (
-	"github.com/jpuriol/cuadrator/domain"
+	"github.com/jpuriol/cuadrator/core"
 	"os"
 
 	"gopkg.in/yaml.v3"
 )
 
-func ReadParticipants() (domain.Participants, error) {
-	data, err := os.ReadFile(participantsFile)
+func ReadParticipants(filename string) (core.Participants, error) {
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func ReadParticipants() (domain.Participants, error) {
 		return nil, err
 	}
 
-	participants := make(domain.Participants)
+	participants := make(core.Participants)
 	for _, name := range names {
 		participants[name] = struct{}{}
 	}
