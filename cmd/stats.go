@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/jpuriol/cuadrator/data"
 	"github.com/spf13/cobra"
@@ -16,11 +15,10 @@ var statsCmd = &cobra.Command{
 	Use:   "stats",
 	Short: "Show how many participants we have per shift",
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		d, err := data.LoadAll()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			return err
 		}
 
 		for _, shiftID := range d.Quadrant.OrderedShiftIDs() {
@@ -32,6 +30,7 @@ var statsCmd = &cobra.Command{
 			}
 
 		}
+		return nil
 	},
 }
 
