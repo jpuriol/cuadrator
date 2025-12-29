@@ -67,6 +67,23 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 				text.NewCol(9, teamsText),
 			)
 		}
+
+		if s.NoOccupation != "" {
+			var free []string
+			occupied := q[shiftN].NameFrequency()
+			for pName := range p {
+				if _, ok := occupied[pName]; !ok {
+					free = append(free, pName)
+				}
+			}
+			sort.Strings(free)
+			if len(free) > 0 {
+				m.AddRow(11,
+					text.NewCol(3, s.NoOccupation),
+					text.NewCol(9, strings.Join(free, ", ")),
+				)
+			}
+		}
 	}
 
 	document, err := m.Generate()

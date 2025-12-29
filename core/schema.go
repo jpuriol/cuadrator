@@ -3,9 +3,10 @@ package core
 import "fmt"
 
 type Schema struct {
-	Name        string
-	Shifts      map[int]string
-	Occupations map[int]string
+	Name         string
+	Shifts       map[int]string
+	Occupations  map[int]string
+	NoOccupation string `yaml:"no_occupation"`
 }
 
 func (s Schema) ShiftName(shiftID int) string {
