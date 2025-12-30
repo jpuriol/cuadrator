@@ -1,4 +1,4 @@
-package termui
+package tui
 
 import (
 	"fmt"
