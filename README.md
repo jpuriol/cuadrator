@@ -8,8 +8,8 @@ The tool offers several commands to interact with the quadrant data:
 
 - `check`: Verifies if the information contained in the YAML files is valid and consistent.
 - `pdf`: Generates a PDF document with the quadrant information.
-- `stats`: Shows statistics about how many participants there are for each shift.
-- `tui`: Interactive Terminal User Interface to view participant occupations.
+- `stats`: Shows statistics about participant distribution across shifts and occupations.
+- `tui`: Interactive Terminal User Interface to browse participants and their assigned occupations.
 
 To see the detailed help for any command, you can run:
 ```bash
@@ -32,13 +32,17 @@ Example:
 
 ### `schema.yaml`
 Defines the structure of the quadrant:
-- **name**: Name of the quadrant.
+- **name**: Internal name of the quadrant (used for the PDF filename).
+- **title**: Title shown in the exported PDF.
+- **subtitle**: Subtitle shown in the exported PDF.
 - **shifts**: Definition of the shift schedules.
 - **occupations**: List of the different tasks or occupations available.
 
 Example:
 ```yaml
-name: "Shift Schedule 2023"
+name: "Shift_Schedule_2023"
+title: "Shift Schedule 2023"
+subtitle: "First Quarter"
 shifts:
   1: "08:00-12:00"
   2: "12:00-16:00"
@@ -47,7 +51,7 @@ occupations:
   2: "Security"
 ```
 
-### `quadrant.yaml`
+### `schedule.yaml`
 Contains the actual assignment of participants to the shifts and occupations defined in the schema.
 
 Example:
@@ -68,12 +72,13 @@ Example:
 If you have Go installed, you can compile the project by running:
 
 ```bash
-go build -o cuadrator ./cmd/cuadrator/main.go
+go build -o cuadrator ./cmd/cuadrator/*.go
 ```
 
 Then, you can run the commands mentioned above:
 
 ```bash
+./cuadrator tui
 ./cuadrator check
 ./cuadrator pdf
 ```
