@@ -1,7 +1,9 @@
-package adapters
+package pdf
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"sort"
 	"strings"
 
@@ -18,26 +20,25 @@ import (
 	"github.com/jpuriol/cuadrator/core"
 )
 
-// WritePDF generates a PDF file representing the quadrant according to the provided participants and schema.
-func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
-	err := q.ValidateNames(p)
-	if err != nil {
-		return err
-	}
+type Generator struct{}
 
-	err = q.ValidateShifts()
-	if err != nil {
+func New() *Generator {
+	return &Generator{}
+}
+
+func (g *Generator) Generate(ctx context.Context, schedule core.Schedule, participants core.Participants, schema core.Schema, w io.Writer) error {
+	if err := core.ValidateSchedule(schedule, participants); err != nil {
 		return err
 	}
 
 	var shiftNums []int
-	for k := range s.Shifts {
+	for k := range schema.Shifts {
 		shiftNums = append(shiftNums, k)
 	}
 	sort.Ints(shiftNums)
 
 	var occupationNums []int
-	for k := range s.Occupations {
+	for k := range schema.Occupations {
 		occupationNums = append(occupationNums, k)
 	}
 	sort.Ints(occupationNums)
@@ -46,22 +47,22 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 
 	// Header
 	m.AddRow(15,
-		text.NewCol(12, s.Title, props.Text{
+		text.NewCol(12, schema.Title, props.Text{
 			Top:    5,
 			Size:   20,
 			Style:  fontstyle.Bold,
 			Align:  align.Center,
-			Family: fontfamily.Helvetica,
+			Family: fontfamily.Courier,
 		}),
 	)
 
-	if s.Subtitle != "" {
+	if schema.Subtitle != "" {
 		m.AddRow(10,
-			text.NewCol(12, s.Subtitle, props.Text{
+			text.NewCol(12, schema.Subtitle, props.Text{
 				Size:   14,
 				Style:  fontstyle.Italic,
 				Align:  align.Center,
-				Family: fontfamily.Helvetica,
+				Family: fontfamily.Courier,
 			}),
 		)
 	}
@@ -83,7 +84,7 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 		// Shift Title Row
 		shiftRows = append(shiftRows,
 			row.New(6).Add(
-				text.NewCol(12, s.ShiftName(shiftN), props.Text{
+				text.NewCol(12, schema.ShiftName(shiftN), props.Text{
 					Size:   10,
 					Style:  fontstyle.Bold,
 					Align:  align.Center,
@@ -103,8 +104,8 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 
 		for _, occupationN := range occupationNums {
 			var teams strings.Builder
-			for _, team := range q[shiftN][occupationN] {
-				teamStr := strings.Join(team, "-")
+			for _, group := range schedule[shiftN][occupationN] {
+				teamStr := strings.Join(group, "-")
 				teams.WriteString(fmt.Sprintf("%v / ", teamStr))
 			}
 
@@ -115,7 +116,7 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 
 			shiftRows = append(shiftRows,
 				row.New(8).Add(
-					text.NewCol(4, s.OccupationName(occupationN), props.Text{
+					text.NewCol(4, schema.OccupationName(occupationN), props.Text{
 						Right:  5,
 						Top:    1,
 						Style:  fontstyle.Bold,
@@ -132,10 +133,10 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 			)
 		}
 
-		if s.NoOccupation != "" {
+		if schema.NoOccupation != "" {
 			var free []string
-			occupied := q[shiftN].NameFrequency()
-			for pName := range p {
+			occupied := schedule[shiftN].NameFrequency()
+			for pName := range participants {
 				if _, ok := occupied[pName]; !ok {
 					free = append(free, pName)
 				}
@@ -155,7 +156,7 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 				)
 				shiftRows = append(shiftRows,
 					row.New(8).Add(
-						text.NewCol(4, s.NoOccupation, props.Text{
+						text.NewCol(4, schema.NoOccupation, props.Text{
 							Right:  5,
 							Top:    1,
 							Style:  fontstyle.Italic,
@@ -185,11 +186,6 @@ func WritePDF(q core.Quadrant, p core.Participants, s core.Schema) error {
 		return err
 	}
 
-	pdfFileName := fmt.Sprintf("%s.pdf", s.Name)
-	err = document.Save(pdfFileName)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err = w.Write(document.GetBytes())
+	return err
 }
