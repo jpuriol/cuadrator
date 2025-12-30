@@ -19,6 +19,9 @@ type model struct {
 	// Cached data
 	schedule core.Schedule
 	schema   core.Schema
+
+	height     int
+	startIndex int
 }
 
 func NewModel(participants core.Participants, schedule core.Schedule, schema core.Schema) tea.Model {
@@ -41,6 +44,10 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.height = msg.Height
+		return m, nil
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
@@ -49,11 +56,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 			if !m.showDetails && m.cursor > 0 {
 				m.cursor--
+				if m.cursor < m.startIndex {
+					m.startIndex = m.cursor
+				}
 			}
 
 		case "down", "j":
 			if !m.showDetails && m.cursor < len(m.participants)-1 {
 				m.cursor++
+				maxVisible := m.height - 5
+				if m.height == 0 {
+					maxVisible = len(m.participants)
+				} else if maxVisible < 1 {
+					maxVisible = 1
+				}
+				if m.cursor >= m.startIndex+maxVisible {
+					m.startIndex = m.cursor - maxVisible + 1
+				}
 			}
 
 		case "enter":
@@ -86,9 +105,22 @@ func (m model) View() string {
 
 func (m model) listView() string {
 	var s strings.Builder
-	s.WriteString("Participants:\n\n")
+	s.WriteString("PARTICIPANTS:\n\n")
 
-	for i, name := range m.participants {
+	maxVisible := m.height - 5
+	if m.height == 0 {
+		maxVisible = len(m.participants)
+	} else if maxVisible < 1 {
+		maxVisible = 1
+	}
+
+	endIndex := m.startIndex + maxVisible
+	if endIndex > len(m.participants) {
+		endIndex = len(m.participants)
+	}
+
+	for i := m.startIndex; i < endIndex; i++ {
+		name := m.participants[i]
 		assignments := m.schedule.GetAssignments(name)
 		item := fmt.Sprintf("%s (%d occupations)", name, len(assignments))
 
@@ -98,6 +130,10 @@ func (m model) listView() string {
 			s.WriteString(fmt.Sprintf("  %s  \n", item))
 		}
 	}
+
+	// Add padding if necessary to keep the footer at the bottom if we want,
+	// but simple scrolling might be enough.
+	// The original code didn't have padding.
 
 	s.WriteString("\n(up/down: navigate, enter: details, q: quit)\n")
 	return s.String()
